@@ -411,7 +411,8 @@ def update_android_226_project(project_path):
     update_lib_projects(sdk_tool_path, android_platform, project_path)
 
 def supports_android_studio(proj):
-    p = os.path.join(proj, 'proj.android-studio')
+    p = os.path.join(proj, '../proj.android-studio')
+    print '# There is android-studio ' + str(os.path.exists(p))
     return os.path.exists(p)
 
 

@@ -24,10 +24,10 @@ import urllib2, json, hashlib, platform, zipfile, stat
 
 ALL_CASES = [
 
-# [
-#     'soomlagrow',
-#     'appodeal',
-# ],
+[
+    'soomlagrow',
+    'appodeal',
+],
 
 [
     'achievement',
@@ -192,6 +192,7 @@ def get_installer_url(is_staging):
         url = 'http://download.sdkbox.com/installer/v1/'
 
     manifest_url = os.path.join(url, 'manifest.json')
+    print '# Get manifest url: ' + manifest_url
     req          = urllib2.Request(manifest_url)
     response     = urllib2.urlopen(req)
     data         = response.read()

@@ -24,52 +24,52 @@ import urllib2, json, hashlib, platform, zipfile, stat
 
 ALL_CASES = [
 
-[
-    'soomlagrow',
-    'appodeal',
-],
+    [
+        'soomlagrow',
+        'appodeal',
+    ],
 
-[
-    'achievement',
-    'adcolony',
-    'agecheq',
-    'chartboost',
-    'facebook',
-    'flurryanalytics',
-    'fyber',
-    'googleanalytics',
-    'iap',
-    'inmobi',
-    'kochava',
-    'leaderboard',
-    'playphone',
-    'review',
-],
+    [
+        'achievement',
+        'adcolony',
+        'agecheq',
+        'chartboost',
+        'facebook',
+        'flurryanalytics',
+        'fyber',
+        'googleanalytics',
+        'iap',
+        'inmobi',
+        'kochava',
+        'leaderboard',
+        'playphone',
+        'review',
+    ],
 
-[
-    'tune',
-    'valuepotion',
-    'vungle',
-    'youtube',
-    'bee7' # target = 21
-],
+    [
+        'tune',
+        'valuepotion',
+        'vungle',
+        'youtube',
+        'bee7'  # target = 21
+    ],
 
-[
-    'scientificrevenue' # using different core
-],
+    [
+        'scientificrevenue'  # using different core
+    ],
 
-# AnySDK ?
-# [
-#     'anysdk'
-# ]
+    # AnySDK ?
+    # [
+    #     'anysdk'
+    # ]
 ]
 
-class Utils:
 
+class Utils:
     """ platforms """
-    PLATFORM_MAC     = 1
+    PLATFORM_MAC = 1
     PLATFORM_WINDOWS = 2
-    PLATFORM_LINUX   = 3
+    PLATFORM_LINUX = 3
 
     @staticmethod
     def curl(url, destination=None, chunk_size=None, callback=None):
@@ -147,7 +147,7 @@ class Utils:
         raise RuntimeError('unsupported platform ' + p)
 
     @staticmethod
-    def unzip_file(path, dir = None):
+    def unzip_file(path, dir=None):
         if path.endswith('.zip'):
             f = open(path, 'rb')
             dir_name = dir
@@ -173,7 +173,8 @@ def download_installer(path, info):
     response = Utils.curl(info['url'], None, 1024, Utils.progress_bar)
     sha1 = Utils.calculate_sha1(response)
     if sha1 != info['sha1']:
-        raise RuntimeError(_('ERROR! SHA1 of update does not match\nFound  : ') + data_sha1 + _('\nNeeded : ') + new_sha1)
+        raise RuntimeError(
+            _('ERROR! SHA1 of update does not match\nFound  : ') + data_sha1 + _('\nNeeded : ') + new_sha1)
 
     try:
         Utils.create_dir_if(path)
@@ -185,6 +186,7 @@ def download_installer(path, info):
 
     return path
 
+
 def get_installer_url(is_staging):
     if is_staging:
         url = 'http://staging.sdkbox.com/installer/v1/'
@@ -193,9 +195,9 @@ def get_installer_url(is_staging):
 
     manifest_url = os.path.join(url, 'manifest.json')
     print '# Get manifest url: ' + manifest_url
-    req          = urllib2.Request(manifest_url)
-    response     = urllib2.urlopen(req)
-    data         = response.read()
+    req = urllib2.Request(manifest_url)
+    response = urllib2.urlopen(req)
+    data = response.read()
     if not data or 0 == len(data):
         raise Exception('ERROR! load manifest fail')
     manifest = json.loads(data)
@@ -225,7 +227,8 @@ def get_installer_url(is_staging):
     if 'bundle' not in manifest or 'sha1' not in manifest:
         raise Exception('ERROR! manifest format error')
 
-    return {'url': url + manifest['bundle'], 'bundle':manifest['bundle'] , 'sha1': manifest['sha1']}
+    return {'url': url + manifest['bundle'], 'bundle': manifest['bundle'], 'sha1': manifest['sha1']}
+
 
 def print_usage():
     print '''Usage: {file}
@@ -253,13 +256,16 @@ def print_usage():
 
     sys.exit(2)
 
+
 def get_curr_path():
     return os.path.dirname(os.path.realpath(__file__))
+
 
 def get_sdkbox_dir():
     sdkbox_installer_dir = os.path.join(get_curr_path(), '.sdkbox', 'bin')
     print 'sdkbox installer dir: ' + sdkbox_installer_dir
     return sdkbox_installer_dir
+
 
 def get_sdkbox_path():
     sdkbox_exec_file = 'sdkbox.bat' if Utils.platform() == Utils.PLATFORM_WINDOWS else 'sdkbox'
@@ -267,14 +273,16 @@ def get_sdkbox_path():
     print 'sdkbox installer path: ' + sdkbox_installer_path
     return sdkbox_installer_path
 
+
 def trim_folder(f):
     return os.path.abspath(f).rstrip('/')
+
 
 def update_android_226_project(project_path):
     def get_api_level(target_str, raise_error=True):
         special_targats_info = {
-            'android-4.2' : 17,
-            'android-L' : 20
+            'android-4.2': 17,
+            'android-L': 20
         }
 
         if special_targats_info.has_key(target_str):
@@ -310,8 +318,8 @@ def update_android_226_project(project_path):
         raise Exception('COMPILE_ERROR_TARGET_NOT_FOUND_FMT', property_file)
 
     def select_default_android_platform(min_api_level):
-        ''' select a default android platform in SDK_ROOT
-        '''
+        """ select a default android platform in SDK_ROOT
+        """
 
         sdk_root = os.environ['ANDROID_SDK_ROOT']
         platforms_dir = os.path.join(sdk_root, 'platforms')
@@ -359,7 +367,7 @@ def update_android_226_project(project_path):
             raise Exception('COMPILE_ERROR_NO_AP_IN_SDK_FMT', ret)
 
         special_platforms_info = {
-            'android-4.2' : 'android-17'
+            'android-4.2': 'android-17'
         }
         if special_platforms_info.has_key(ret):
             ret = special_platforms_info[ret]
@@ -410,6 +418,7 @@ def update_android_226_project(project_path):
     print '# update android lib-projects'
     update_lib_projects(sdk_tool_path, android_platform, project_path)
 
+
 def supports_android_studio(proj):
     p = os.path.join(proj, '../proj.android-studio')
     print '# There is android-studio ' + str(os.path.exists(p))
@@ -424,7 +433,7 @@ def build_android(proj, cocos_version):
             os.chdir(proj)
             print(proj + '/build_native.sh')
             update_android_226_project(proj)
-            subprocess.check_call(proj+'/build_native.sh', shell=True, cwd=proj)
+            subprocess.check_call(proj + '/build_native.sh', shell=True, cwd=proj)
             subprocess.check_call('ant debug', shell=True, cwd=proj)
             os.chdir(cur_dir)
         else:
@@ -459,16 +468,18 @@ def build_ios(proj, cocos_version):
 
             # get arch/scheme/target
             # maybe i368 is enough
-            #scheme = ''
-            #output = subprocess.check_output(['xcodebuild', '-list'])
-            #for line in output.split('\n'):
+            # scheme = ''
+            # output = subprocess.check_output(['xcodebuild', '-list'])
+            # for line in output.split('\n'):
             #    if line.find('iOS') >=0 and line.find('lib') < 0 and line.find('jsbindings') < 0:
             #        scheme = line.strip()
             #        break
 
-            #if scheme != '':
+            # if scheme != '':
             #    subprocess.check_call(['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, '-scheme', scheme, '-configuration', 'Release'])
-            subprocess.check_call(['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration', 'Release'])
+            subprocess.check_call(
+                    ['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration',
+                     'Release'])
             os.chdir(cur_dir)
         else:
             subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8'])
@@ -491,18 +502,19 @@ def find_ios_proj(root, cocos_version):
 
     if cocos_version == 'v2':
         if os.path.isdir(root + '/proj.ios'):
-            return root + '/proj.ios'   #cpp v2
+            return root + '/proj.ios'  # cpp v2
         else:
             print '# template dir is not a project dir'
     else:
-        if os.path.isdir(root + '/frameworks/runtime-src/proj.ios_mac'):  #js & lua v3
+        if os.path.isdir(root + '/frameworks/runtime-src/proj.ios_mac'):  # js & lua v3
             return root + '/frameworks/runtime-src/proj.ios_mac'
         elif os.path.isdir(root + '/proj.ios_mac'):
-            return root + '/proj.ios_mac'   #cpp v3
+            return root + '/proj.ios_mac'  # cpp v3
         else:
             print '# template dir is not a project dir'
 
     return ''
+
 
 def clean_up(template_dir, cocos_version):
     if cocos_version == 'v2':
@@ -514,6 +526,7 @@ def clean_up(template_dir, cocos_version):
     subprocess.Popen(['git', 'checkout', '-f'], cwd=clean_dir).wait()
 
     return 0
+
 
 def get_test_case(argv):
     ret = []
@@ -528,6 +541,7 @@ def get_test_case(argv):
     else:
         ret.append([argv])
     return ret
+
 
 def main(argv):
     try:
@@ -568,7 +582,7 @@ def main(argv):
         shutil.rmtree(SDKBOX_INSTALLER_DIR)
 
     print '# Download sdkbox installer'
-    info = get_installer_url(installer_server=='--staging')
+    info = get_installer_url(installer_server == '--staging')
     path = os.path.join(SDKBOX_INSTALLER_DIR, 'bin', info['bundle'])
     download_installer(path, info)
     Utils.unzip_file(path)
@@ -608,7 +622,8 @@ def main(argv):
             if no_force_download:
                 cmd = [sdkbox_path, '--noupdate', '-vv', 'import', '-b', plugin_name, '-p', template_dir]
             else:
-                cmd = [sdkbox_path, '--noupdate', '--forcedownload', '-vv', 'import', '-b', plugin_name, '-p', template_dir]
+                cmd = [sdkbox_path, '--noupdate', '--forcedownload', '-vv', 'import', '-b', plugin_name, '-p',
+                       template_dir]
             cmd.append('--nohelp')
             if installer_server != '':
                 cmd.append(installer_server)

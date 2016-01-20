@@ -154,7 +154,7 @@ class Utils:
         raise RuntimeError('unsupported platform ' + p)
 
     @staticmethod
-    def unzip_file(path):
+    def unzip_file(path, dir=None):
         if path.endswith('.zip'):
             f = open(path, 'rb')
             dir_name = dir

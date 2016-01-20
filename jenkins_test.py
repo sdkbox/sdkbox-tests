@@ -12,15 +12,19 @@ Copyright (c) 2015-2016 SDKBox Inc.
 # 1. install lots of plugins into [lua,cpp,js]/[226,300,...]
 # 2. compile [ios,android,android-studio]
 
-import os, sys
 import getopt
-import shutil
-import glob
-import subprocess
+import hashlib
+import json
+import os
+import platform
 import re
+import shutil
+import subprocess
+import sys
 import traceback
 import types
-import urllib2, json, hashlib, platform, zipfile, stat
+import urllib2
+import zipfile
 
 ALL_CASES = [
 
@@ -71,11 +75,14 @@ class Utils:
     PLATFORM_WINDOWS = 2
     PLATFORM_LINUX = 3
 
+    def __init__(self):
+        pass
+
     @staticmethod
     def curl(url, destination=None, chunk_size=None, callback=None):
         try:
             response = urllib2.urlopen(url)
-            if None == chunk_size:
+            if chunk_size is None:
                 data = response.read()
             else:
                 data = ''
@@ -86,14 +93,14 @@ class Utils:
                     if not chunk:
                         break
                     size += len(chunk)
-                    if None != callback:
+                    if callback is not None:
                         callback(size, total_size)
                     data += chunk
         except Exception as e:
             print(e)
             print('ERROR! url:' + url)
             return None
-        if None != destination:
+        if destination is not None:
             Utils.create_dir_if(destination)
             f = open(destination, 'wb')
             if not f:
@@ -101,7 +108,7 @@ class Utils:
                 return None
             f.write(data)
             f.close()
-        if None != callback:  # the cursor flyback needs a blank line after
+        if callback is not None:  # the cursor flyback needs a blank line after
             print ''
         return data
 
@@ -147,7 +154,7 @@ class Utils:
         raise RuntimeError('unsupported platform ' + p)
 
     @staticmethod
-    def unzip_file(path, dir=None):
+    def unzip_file(path):
         if path.endswith('.zip'):
             f = open(path, 'rb')
             dir_name = dir
@@ -160,7 +167,7 @@ class Utils:
                 try:
                     data = z.read(n)
                 except:
-                    raise RuntimeError('failed to find ' + n + 'in archive ' + path + name)
+                    raise RuntimeError('failed to find ' + n + 'in archive ' + path)
                 outfile.write(data)
                 outfile.close()
                 unix_attributes = info.external_attr >> 16
@@ -173,8 +180,7 @@ def download_installer(path, info):
     response = Utils.curl(info['url'], None, 1024, Utils.progress_bar)
     sha1 = Utils.calculate_sha1(response)
     if sha1 != info['sha1']:
-        raise RuntimeError(
-            _('ERROR! SHA1 of update does not match\nFound  : ') + data_sha1 + _('\nNeeded : ') + new_sha1)
+        raise RuntimeError('ERROR! SHA1 of update does not match\nFound  : ' + sha1 + '\nNeeded : ' + info['sha1'])
 
     try:
         Utils.create_dir_if(path)
@@ -182,7 +188,7 @@ def download_installer(path, info):
         f.write(response)
         f.close()
     except:
-        raise RuntimeError(_('ERROR! failed to save updated SDKBOX'))
+        raise RuntimeError('ERROR! failed to save updated SDKBOX')
 
     return path
 
@@ -620,9 +626,9 @@ def main(argv):
         for plugin_name in plugins:
             print '# Install plugin ' + plugin_name
             if no_force_download:
-                cmd = [sdkbox_path, '--noupdate', '-vv', 'import', '-b', plugin_name, '-p', template_dir]
+                cmd = [sdkbox_path, '--noupdate', 'import', plugin_name, '-p', template_dir]
             else:
-                cmd = [sdkbox_path, '--noupdate', '--forcedownload', '-vv', 'import', '-b', plugin_name, '-p',
+                cmd = [sdkbox_path, '--noupdate', '--forcedownload', 'import', plugin_name, '-p',
                        template_dir]
             cmd.append('--nohelp')
             if installer_server != '':

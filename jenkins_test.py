@@ -244,7 +244,7 @@ def print_usage():
                     [--platform <ios | android>]
                     [--china, use china server for installer]
                     [--staging, use test server for installer]
-                    [--no-force-download, don't download plugin package each time]
+                    [--use_cached_package, don't download plugin package each time]
 
     # Test all plugins with staging server
     {file} -p /var/cocos/cpp226/projects/cpp226 --staging
@@ -561,7 +561,7 @@ def main(argv):
     installer_server = ''
     platform = ''
     cases = ALL_CASES
-    no_force_download = False
+    use_cached_package = False
 
     for opt, arg in opts:
         if opt == '-p':
@@ -576,8 +576,8 @@ def main(argv):
             installer_server = '--staging'
         if opt == '--platform':
             platform = arg
-        if opt == '--no-force-download':
-            no_force_download = True
+        if opt == '--use_cached_package':
+            use_cached_package = True
 
     if template_dir == '':
         print_usage()
@@ -625,12 +625,9 @@ def main(argv):
 
         for plugin_name in plugins:
             print '# Install plugin ' + plugin_name
-            if no_force_download:
-                cmd = [sdkbox_path, '--noupdate', 'import', plugin_name, '-p', template_dir]
-            else:
-                cmd = [sdkbox_path, '--noupdate', '--forcedownload', 'import', plugin_name, '-p',
-                       template_dir]
-            cmd.append('--nohelp')
+            cmd = [sdkbox_path, 'import', plugin_name, '-p', template_dir, '--nohelp', '--noupdate']
+            if not use_cached_package:
+                cmd.append('--forcedownload')
             if installer_server != '':
                 cmd.append(installer_server)
             print '# Call: ' + ' '.join(cmd)

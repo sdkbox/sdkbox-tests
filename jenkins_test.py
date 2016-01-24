@@ -488,7 +488,7 @@ def build_ios(proj, cocos_version):
                      'Release'])
             os.chdir(cur_dir)
         else:
-            subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8'])
+            subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8', '-q'])
     except subprocess.CalledProcessError as e:
         print '# build ios FAILED. command: ' + ' '.join(e.cmd)
         return e.returncode

@@ -154,11 +154,11 @@ class Utils:
         raise RuntimeError('unsupported platform ' + p)
 
     @staticmethod
-    def unzip_file(path, dir=None):
+    def unzip_file(path, out_dir=None):
         if path.endswith('.zip'):
             f = open(path, 'rb')
-            dir_name = dir
-            if not dir_name:
+            dir_name = out_dir
+            if dir_name is None:
                 dir_name = os.path.dirname(path)
             z = zipfile.ZipFile(f)
             for info in z.infolist():
@@ -174,6 +174,16 @@ class Utils:
                 if unix_attributes:
                     os.chmod(os.path.join(dir_name, n), unix_attributes)
             f.close()
+
+    @staticmethod
+    def has_cmd(name):
+        from distutils import spawn
+        cmd_path = spawn.find_executable(name)
+
+        if cmd_path is not None:
+            return True
+        else:
+            return False
 
 
 def download_installer(path, info):
@@ -286,13 +296,13 @@ def trim_folder(f):
 
 def update_android_226_project(project_path):
     def get_api_level(target_str, raise_error=True):
-        special_targats_info = {
+        special_targets_info = {
             'android-4.2': 17,
             'android-L': 20
         }
 
-        if special_targats_info.has_key(target_str):
-            ret = special_targats_info[target_str]
+        if special_targets_info.has_key(target_str):
+            ret = special_targets_info[target_str]
         else:
             match = re.match(r'android-(\d+)', target_str)
             if match is not None:
@@ -445,7 +455,8 @@ def build_android(proj, cocos_version):
         else:
             subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '-q'])
             if supports_android_studio(proj):
-                subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '-q', '--android-studio'])
+                subprocess.check_call(
+                        ['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '-q', '--android-studio'])
     except subprocess.CalledProcessError as e:
         if type(e.cmd) is types.StringType:
             print '# build android FAILED. execute command error: ' + e.cmd
@@ -472,23 +483,20 @@ def build_ios(proj, cocos_version):
             result = re.search('iphonesimulator.+', output)
             sdk = result.group(0)
 
-            # get arch/scheme/target
-            # maybe i368 is enough
-            # scheme = ''
-            # output = subprocess.check_output(['xcodebuild', '-list'])
-            # for line in output.split('\n'):
-            #    if line.find('iOS') >=0 and line.find('lib') < 0 and line.find('jsbindings') < 0:
-            #        scheme = line.strip()
-            #        break
+            cmd = ['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration', 'Release']
 
-            # if scheme != '':
-            #    subprocess.check_call(['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, '-scheme', scheme, '-configuration', 'Release'])
-            subprocess.check_call(
-                    ['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration',
-                     'Release'])
+            if Utils.has_cmd('xcpretty'):
+                cmd.append('| xcpretty && exit ${PIPESTATUS[0]}')
+
+            subprocess.check_call(cmd)
             os.chdir(cur_dir)
         else:
-            subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8'])
+            cmd = ['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8']
+
+            if Utils.has_cmd('xcpretty'):
+                cmd.append('| xcpretty && exit ${PIPESTATUS[0]}')
+            
+            subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:
         print '# build ios FAILED. command: ' + ' '.join(e.cmd)
         return e.returncode

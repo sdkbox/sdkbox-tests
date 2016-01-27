@@ -51,6 +51,27 @@ ALL_CASES = [
     ],
 
     [
+        'achievement',
+        'adcolony',
+        'agecheq',
+        'chartboost',
+        'facebook',
+        'flurryanalytics',
+        'fyber',
+        'googleanalytics',
+        'iap',
+        'inmobi',
+        'kochava',
+        'leaderboard',
+        'playphone',
+        'review',
+        'tune',
+        'valuepotion',
+        'vungle',
+        'youtube'  # all non-conflict plugins
+    ],
+
+    [
         'tune',
         'valuepotion',
         'vungle',

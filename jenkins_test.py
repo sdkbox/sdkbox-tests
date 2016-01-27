@@ -60,9 +60,9 @@ ALL_CASES = [
         'bee7'  # target = 21
     ],
 
-    [
-        'scientificrevenue'  # using different core
-    ],
+    # [
+    #     'scientificrevenue'  # using different core
+    # ],
 
     # AnySDK ?
     # [

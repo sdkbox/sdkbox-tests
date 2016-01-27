@@ -487,16 +487,10 @@ def build_ios(proj, cocos_version):
 
             cmd = ['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration', 'Release']
 
-            if Utils.has_cmd('xcpretty'):
-                cmd.append('| xcpretty && exit ${PIPESTATUS[0]}')
-
             subprocess.check_call(cmd)
             os.chdir(cur_dir)
         else:
             cmd = ['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8']
-
-            if Utils.has_cmd('xcpretty'):
-                cmd.append('| xcpretty && exit ${PIPESTATUS[0]}')
             
             subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:

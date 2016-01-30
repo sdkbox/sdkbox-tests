@@ -51,7 +51,8 @@ ALL_CASES = [
         'vungle',
         'tune',
         'valuepotion',
-        'admob'
+        'admob',
+        'share'
     ],
 
     [

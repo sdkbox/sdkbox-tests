@@ -50,7 +50,8 @@ ALL_CASES = [
         'review',
         'vungle',
         'tune',
-        'valuepotion'
+        'valuepotion',
+        'admob'
     ],
 
     [
@@ -495,7 +496,7 @@ def build_ios(proj, cocos_version):
             os.chdir(cur_dir)
         else:
             cmd = ['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8']
-            
+
             subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:
         print '# build ios FAILED. command: ' + ' '.join(e.cmd)

@@ -56,9 +56,12 @@ ALL_CASES = [
         'tune',
         'valuepotion',
         'vungle',
-        'youtube',
-        'bee7'  # target = 21
-    ],
+        'youtube'# target = 21
+    ]
+
+    # [
+    #     'bee7'  # target = 21
+    # ]
 
     # [
     #     'scientificrevenue'  # using different core

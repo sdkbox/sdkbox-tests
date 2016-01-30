@@ -48,6 +48,7 @@ ALL_CASES = [
         'leaderboard',
         'playphone',
         'review',
+        'vungle',
         'tune',
         'valuepotion'
     ],

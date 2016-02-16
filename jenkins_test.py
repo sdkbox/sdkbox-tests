@@ -559,6 +559,20 @@ def get_test_case(argv):
     return ret
 
 
+def clean_sdkbox_cache():
+    from os.path import expanduser
+    home_dir = expanduser("~")
+    sdkbox_home = os.path.join(home_dir, '.sdkbox')
+    sdkbox_plugin_dir = os.path.join(sdkbox_home, 'plugins')
+    sdkbox_log_dir = os.path.join(sdkbox_home, 'log')
+
+    if os.path.isdir(sdkbox_plugin_dir):
+        shutil.rmtree(sdkbox_plugin_dir)
+
+    if os.path.isdir(sdkbox_log_dir):
+        shutil.rmtree(sdkbox_log_dir)
+
+
 def main(argv):
     try:
         opts, args = getopt.getopt(argv, 'p:g:l:', ['china', 'staging', 'platform=', 'use_cached_package'])
@@ -591,6 +605,9 @@ def main(argv):
 
     if template_dir == '':
         print_usage()
+
+    print '# Clean sdkbox cache'
+    clean_sdkbox_cache()
 
     print '# Check sdkbox installer directory'
     SDKBOX_INSTALLER_DIR = os.path.join(get_curr_path(), '.sdkbox')

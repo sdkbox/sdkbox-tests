@@ -52,6 +52,7 @@ ALL_CASES = [
         'tune',
         'valuepotion',
         'admob',
+        'leadbolt',
         'share'
     ],
 
@@ -565,12 +566,16 @@ def clean_sdkbox_cache():
     sdkbox_home = os.path.join(home_dir, '.sdkbox')
     sdkbox_plugin_dir = os.path.join(sdkbox_home, 'plugins')
     sdkbox_log_dir = os.path.join(sdkbox_home, 'log')
+    sdkbox_cache_dir = os.path.join(sdkbox_home, 'cache')
 
     if os.path.isdir(sdkbox_plugin_dir):
         shutil.rmtree(sdkbox_plugin_dir)
 
     if os.path.isdir(sdkbox_log_dir):
         shutil.rmtree(sdkbox_log_dir)
+
+    if os.path.isdir(sdkbox_cache_dir):
+        shutil.rmtree(sdkbox_cache_dir)
 
 
 def main(argv):

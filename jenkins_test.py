@@ -253,7 +253,7 @@ def get_installer_url(is_staging):
     if 'bundle' not in manifest or 'sha1' not in manifest:
         raise Exception('ERROR! manifest format error')
 
-    return {'url': url + manifest['bundle'] + '?' + random.randint(0, 10000000), 'bundle': manifest['bundle'], 'sha1': manifest['sha1']}
+    return {'url': url + manifest['bundle'] + '?' + str(random.randint(0, 10000000)), 'bundle': manifest['bundle'], 'sha1': manifest['sha1']}
 
 
 def print_usage():

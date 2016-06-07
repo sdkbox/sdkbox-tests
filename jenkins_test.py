@@ -61,7 +61,8 @@ ALL_CASES = [
         'tune',
         'valuepotion',
         'vungle',
-        'youtube'# target = 21
+        'youtube', # target = 21
+        'onesignal'
     ]
 
     # [

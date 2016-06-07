@@ -31,8 +31,6 @@ ALL_CASES = [
 
     [
         'soomlagrow',
-    ],
-    [
         'appodeal',
     ],
 

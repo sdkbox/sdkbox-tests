@@ -572,12 +572,15 @@ def clean_sdkbox_cache():
     sdkbox_cache_dir = os.path.join(sdkbox_home, 'cache')
 
     if os.path.isdir(sdkbox_plugin_dir):
+        print 'Removing ' + sdkbox_plugin_dir
         shutil.rmtree(sdkbox_plugin_dir)
 
     if os.path.isdir(sdkbox_log_dir):
+        print 'Removing ' + sdkbox_log_dir
         shutil.rmtree(sdkbox_log_dir)
 
     if os.path.isdir(sdkbox_cache_dir):
+        print 'Removing ' + sdkbox_cache_dir
         shutil.rmtree(sdkbox_cache_dir)
 
 

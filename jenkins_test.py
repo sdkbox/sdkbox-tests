@@ -45,7 +45,6 @@ ALL_CASES = [
         'fyber',
         'googleanalytics',
         'iap',
-        'inmobi',
         'kochava',
         'leaderboard',
         'playphone',
@@ -55,7 +54,7 @@ ALL_CASES = [
         'valuepotion',
         'admob',
         'leadbolt',
-        'share'
+        'share',
     ],
 
     [
@@ -63,7 +62,8 @@ ALL_CASES = [
         'valuepotion',
         'vungle',
         'youtube', # target = 21
-        'onesignal'
+        'onesignal',
+        'inmobi',
     ]
 
     # [

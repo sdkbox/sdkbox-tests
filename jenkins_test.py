@@ -36,6 +36,7 @@ ALL_CASES = [
     ],
 
     [
+        'agecheq',
         'adcolony',
         'chartboost',
         'facebook',
@@ -47,13 +48,24 @@ ALL_CASES = [
         'admob',
         'share'
     ],
-    [ 'agecheq' ],
-    [ 'vungle' ],
-    [ 'appnext' ],
-    [ 'admob', 'sdkboxads', 'fyber', 'tune','leadbolt' ],
-    [ 'iap', 'playphone', 'amazon', 'achievement','leaderboard'],
-    [ 'apteligent', 'kochava', 'tune'],
+    [ 
+        'appnext', 
+        'iap', 
+        'playphone', 
+        'amazon', 
+        'achievement',
+        'leaderboard', 
+        'admob', 
+        'sdkboxads', 
+        'fyber', 
+        'tune',
+        'leadbolt', 
+        'apteligent', 
+        'kochava', 
+        'tune'
+    ],
     [
+        'vungle',
         'tune',
         'valuepotion',
         'vungle',

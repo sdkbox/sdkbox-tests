@@ -31,7 +31,6 @@ import random
 ALL_CASES = [
 
     [
-        'soomlagrow',
         'appodeal',
     ],
 
@@ -53,8 +52,6 @@ ALL_CASES = [
         'iap', 
         'playphone', 
         'amazon', 
-        'achievement',
-        'leaderboard', 
         'admob', 
         'sdkboxads', 
         'fyber', 
@@ -65,10 +62,8 @@ ALL_CASES = [
         'tune'
     ],
     [
-        'vungle',
         'tune',
         'valuepotion',
-        'vungle',
         'youtube', # target = 21
         'onesignal',
         'inmobi',

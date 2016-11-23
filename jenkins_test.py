@@ -38,7 +38,6 @@ ALL_CASES = [
         'agecheq',
         'adcolony',
         'chartboost',
-        'facebook',
         'flurryanalytics',
         'googleanalytics',
         'iap',
@@ -62,6 +61,7 @@ ALL_CASES = [
         'tune'
     ],
     [
+        'facebook',
         'tune',
         'valuepotion',
         'youtube', # target = 21

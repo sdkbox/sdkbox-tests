@@ -46,19 +46,18 @@ ALL_CASES = [
         'admob',
         'share'
     ],
-    [ 
-        'appnext', 
-        'iap', 
-        'playphone', 
-        'amazon', 
-        'admob', 
-        'sdkboxads', 
-        'fyber', 
+    [
+        'appnext',
+        'iap',
+        'playphone',
+        'amazon',
+        'admob',
+        'sdkboxads',
+        'fyber',
         'tune',
-        'leadbolt', 
-        'apteligent', 
-        'kochava', 
-        'tune'
+        'leadbolt',
+        'apteligent',
+        'kochava',
     ],
     [
         'facebook',
@@ -67,6 +66,11 @@ ALL_CASES = [
         'youtube', # target = 21
         'onesignal',
         'inmobi',
+    ],
+    [
+        'facebook',
+        'tune',
+        'share',
     ]
 
     # [

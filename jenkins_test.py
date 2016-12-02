@@ -60,8 +60,6 @@ ALL_CASES = [
         'kochava',
     ],
     [
-        'facebook',
-        'tune',
         'valuepotion',
         'youtube', # target = 21
         'onesignal',

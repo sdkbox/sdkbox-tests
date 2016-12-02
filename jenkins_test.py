@@ -676,7 +676,15 @@ def main(argv):
             if installer_server != '':
                 cmd.append(installer_server)
             print '# Call: ' + ' '.join(cmd)
-            if subprocess.call(cmd) != 0:
+
+            # time out, try 10 times
+            exitno = 0
+            for x in xrange(1,10):
+                exitno = subprocess.call(cmd)
+                if exitno != 10:   # timeout code
+                    break
+
+            if exitno != 0:
                 return 1
 
         if platform != 'android':

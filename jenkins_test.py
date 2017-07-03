@@ -470,10 +470,10 @@ def build_android(proj, cocos_version):
             subprocess.check_call('ant debug', shell=True, cwd=proj)
             os.chdir(cur_dir)
         else:
-            subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8'])
+            subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '--app-abi', 'armeabi'])
             if supports_android_studio(proj):
                 subprocess.check_call(
-                        ['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio'])
+                        ['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio', '--app-abi', 'armeabi'])
     except subprocess.CalledProcessError as e:
         if type(e.cmd) is types.StringType:
             print '# build android FAILED. execute command error: ' + e.cmd

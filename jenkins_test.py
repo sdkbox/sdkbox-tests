@@ -30,9 +30,10 @@ import random
 
 ALL_CASES = [
 
-    [
-        'appodeal',
-    ],
+    # Eclipse java method 65536
+    # [
+    #     'appodeal',
+    # ],
 
     [
         'agecheq',

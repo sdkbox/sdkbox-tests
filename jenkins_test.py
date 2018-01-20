@@ -36,13 +36,13 @@ ALL_CASES = [
     # ],
 
     [
-        'agecheq',
+        # 'agecheq',
         'adcolony',
         'chartboost',
-        'flurryanalytics',
+        # 'flurryanalytics',
         'googleanalytics',
         'iap',
-        'playphone',
+        # 'playphone',
         'review',
         'admob',
         'share'
@@ -56,15 +56,15 @@ ALL_CASES = [
         'sdkboxads',
         'fyber',
         'tune',
-        'leadbolt',
+        # 'leadbolt',
         'apteligent',
-        'kochava',
+        # 'kochava',
     ],
     [
-        'valuepotion',
+        # 'valuepotion',
         'youtube', # target = 21
         'onesignal',
-        'inmobi',
+        # 'inmobi',
     ],
     [
         'facebook',

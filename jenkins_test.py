@@ -50,7 +50,7 @@ ALL_CASES = [
     [
         'appnext',
         'iap',
-        'playphone',
+        # 'playphone',
         'amazon',
         'admob',
         'sdkboxads',

@@ -65,7 +65,7 @@ ALL_CASES = [
         'youtube', # target = 21
         'onesignal',
         # 'inmobi',
-        'tapcore',
+        # 'tapcore',
     ],
     [
         'facebook',

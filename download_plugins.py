@@ -42,11 +42,11 @@ def download(bundle):
         if os.path.exists(filepath):
             os.remove(filepath)
         link = os.path.join(pre, filepath
-        print('> Download ' + link)
+        print '> Download ' + link
 
         cmd = 'wget ' + link)
         run(cmd)
-        print ('Checking {0} sha1'.format(filepath), hashfile(filepath) == bundle['sha1'])
+        print 'Checking {0} sha1'.format(filepath), hashfile(filepath) == bundle['sha1']
 
 pre = 'http://download.sdkbox.com/installer/v1/'
 
@@ -63,7 +63,6 @@ download(sdkbox_installer.values()[0])
 
 # download plugins
 for name in manifest['packages']:
-    print(name)
     if name == 'SDKBOX':
         continue
 
@@ -73,4 +72,4 @@ for name in manifest['packages']:
     download(versions['v3'])
     sys.exit(0)
 
-print('> Done.')
+print '> Done.'

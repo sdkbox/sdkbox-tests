@@ -41,10 +41,10 @@ def download(bundle):
     else:
         if os.path.exists(filepath):
             os.remove(filepath)
-        link = os.path.join(pre, filepath
+        link = os.path.join(pre, filepath)
         print '> Download ' + link
 
-        cmd = 'wget ' + link)
+        cmd = 'wget ' + link
         run(cmd)
         print 'Checking {0} sha1'.format(filepath), hashfile(filepath) == bundle['sha1']
 

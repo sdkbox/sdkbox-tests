@@ -69,8 +69,10 @@ ALL_CASES = [
     ],
     [
         'facebook',
-        'tune',
-        'share',
+        'share'
+    ],
+    [
+        'tune'
     ]
 
     # [

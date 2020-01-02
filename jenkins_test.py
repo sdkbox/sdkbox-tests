@@ -36,6 +36,12 @@ ALL_CASES = [
     # ],
 
     [
+        'iap',
+        'firebase',
+        'sdkboxplay',
+        'admob',
+    ],
+    [
         # 'agecheq',
         'adcolony',
         'chartboost',

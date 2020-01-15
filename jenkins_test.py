@@ -467,8 +467,15 @@ def supports_android_studio(proj):
     print '# There is android-studio ' + str(os.path.exists(p))
     return os.path.exists(p)
 
+def get_local_cocos_cmd(project_path):
+    console = os.path.join(project_path, 'cocos2d-console')
+    cocos_cmd = os.path.join(console, 'bin', 'cocos')
+    if os.path.exists(console) and os.path.exists(cocos_cmd):
+        return cocos_cmd
+    else:
+        return ''
 
-def build_android(proj, cocos_version):
+def build_android(proj, cocos_version, cocos_cmd):
     print '# build project for android platform.'
     try:
         if cocos_version == 'v2':
@@ -480,10 +487,10 @@ def build_android(proj, cocos_version):
             subprocess.check_call('ant debug', shell=True, cwd=proj)
             os.chdir(cur_dir)
         else:
-            subprocess.check_call(['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '--app-abi', 'armeabi'])
+            subprocess.check_call([cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--app-abi', 'armeabi'])
             if supports_android_studio(proj):
                 subprocess.check_call(
-                        ['cocos', 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio', '--app-abi', 'armeabi'])
+                        [cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio', '--app-abi', 'armeabi'])
     except subprocess.CalledProcessError as e:
         if type(e.cmd) is types.StringType:
             print '# build android FAILED. execute command error: ' + e.cmd
@@ -498,7 +505,7 @@ def build_android(proj, cocos_version):
     return 0
 
 
-def build_ios(proj, cocos_version):
+def build_ios(proj, cocos_version, cocos_cmd):
     print '# build project for ios platform.'
     try:
         if cocos_version == 'v2':
@@ -515,7 +522,7 @@ def build_ios(proj, cocos_version):
             subprocess.check_call(cmd)
             os.chdir(cur_dir)
         else:
-            cmd = ['cocos', 'compile', '-s', proj, '-p', 'ios', '-j', '8']
+            cmd = [cocos_cmd, 'compile', '-s', proj, '-p', 'ios', '-j', '8']
 
             subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:
@@ -612,6 +619,7 @@ def main(argv):
     platform = ''
     cases = ALL_CASES
     use_cached_package = False
+    cocos_cmd = ''
 
     for opt, arg in opts:
         if opt == '-p':
@@ -672,6 +680,10 @@ def main(argv):
     android_proj = os.path.abspath(ios_proj + '/../proj.android')
     sdkbox_path = get_sdkbox_path()
 
+    cocos_cmd = get_local_cocos_cmd(template_dir)
+    if not cocos_cmd:
+        cocos_cmd = 'cocos'
+
     for plugins in cases:
         print '# Clean up.'
         clean_up(template_dir, cocos_version)
@@ -696,10 +708,10 @@ def main(argv):
                 return 1
 
         if platform != 'android':
-            if build_ios(ios_proj, cocos_version) != 0:
+            if build_ios(ios_proj, cocos_version, cocos_cmd) != 0:
                 return 1
         if platform != 'ios':
-            if build_android(android_proj, cocos_version) != 0:
+            if build_android(android_proj, cocos_version, cocos_cmd) != 0:
                 return 1
 
     print '# All Done.'

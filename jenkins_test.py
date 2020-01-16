@@ -49,9 +49,9 @@ ALL_CASES = [
         'googleanalytics',
         'iap',
         # 'playphone',
-        'review',
         'admob',
-        'share'
+        'share',
+        'review',
     ],
     [
         'appnext',

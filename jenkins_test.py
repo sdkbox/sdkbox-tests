@@ -469,6 +469,8 @@ def supports_android_studio(proj):
 
 def get_local_cocos_cmd(project_path):
     console = os.path.join(project_path, 'cocos2d', 'tools', 'cocos2d-console')
+    if not os.path.exists(console):
+        console = os.path.join(project_path, 'frameworks', 'cocos2d-x', 'tools', 'cocos2d-console')
     cocos_cmd = os.path.join(console, 'bin', 'cocos')
     if os.path.exists(console) and os.path.exists(cocos_cmd):
         return cocos_cmd

@@ -467,32 +467,39 @@ def supports_android_studio(proj):
     print '# There is android-studio ' + str(os.path.exists(p))
     return os.path.exists(p)
 
-def get_local_cocos_cmd(project_path):
-    console = os.path.join(project_path, 'cocos2d', 'tools', 'cocos2d-console')
+def get_local_cocos_cmd(project_path, creator_path):
+    console = os.path.join(creator_path, 'Contents', 'Resources', 'cocos2d-x', 'tools', 'cocos2d-console')
     if not os.path.exists(console):
-        console = os.path.join(project_path, 'frameworks', 'cocos2d-x', 'tools', 'cocos2d-console')
+        console = os.path.join(project_path, 'cocos2d', 'tools', 'cocos2d-console')
+        if not os.path.exists(console):
+            console = os.path.join(project_path, 'frameworks', 'cocos2d-x', 'tools', 'cocos2d-console')
     cocos_cmd = os.path.join(console, 'bin', 'cocos')
     if os.path.exists(console) and os.path.exists(cocos_cmd):
         return cocos_cmd
     else:
         return ''
 
-def build_android(proj, cocos_version, cocos_cmd):
+def build_android(proj, game_engine, cocos_version, cocos_cmd):
     print '# build project for android platform.'
     try:
-        if cocos_version == 'v2':
-            cur_dir = os.getcwd()
-            os.chdir(proj)
-            print(proj + '/build_native.sh')
-            update_android_226_project(proj)
-            subprocess.check_call(proj + '/build_native.sh', shell=True, cwd=proj)
-            subprocess.check_call('ant debug', shell=True, cwd=proj)
-            os.chdir(cur_dir)
+        if 'creator' == game_engine:
+            cmd = [cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio']
+
+            subprocess.check_call(cmd)
         else:
-            subprocess.check_call([cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--app-abi', 'armeabi-v7a'])
-            if supports_android_studio(proj):
-                subprocess.check_call(
-                        [cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio', '--app-abi', 'armeabi-v7a'])
+            if cocos_version == 'v2':
+                cur_dir = os.getcwd()
+                os.chdir(proj)
+                print(proj + '/build_native.sh')
+                update_android_226_project(proj)
+                subprocess.check_call(proj + '/build_native.sh', shell=True, cwd=proj)
+                subprocess.check_call('ant debug', shell=True, cwd=proj)
+                os.chdir(cur_dir)
+            else:
+                subprocess.check_call([cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--app-abi', 'armeabi-v7a'])
+                if supports_android_studio(proj):
+                    subprocess.check_call(
+                            [cocos_cmd, 'compile', '-s', proj, '-p', 'android', '-j', '8', '--android-studio', '--app-abi', 'armeabi-v7a'])
     except subprocess.CalledProcessError as e:
         if type(e.cmd) is types.StringType:
             print '# build android FAILED. execute command error: ' + e.cmd
@@ -507,26 +514,31 @@ def build_android(proj, cocos_version, cocos_cmd):
     return 0
 
 
-def build_ios(proj, cocos_version, cocos_cmd):
+def build_ios(proj, game_engine, cocos_version, cocos_cmd):
     print '# build project for ios platform.'
     try:
-        if cocos_version == 'v2':
-            cur_dir = os.getcwd()
-            os.chdir(proj)
-
-            # get sdk
-            output = subprocess.check_output(['xcodebuild', '-showsdks'])
-            result = re.search('iphonesimulator.+', output)
-            sdk = result.group(0)
-
-            cmd = ['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration', 'Release']
-
-            subprocess.check_call(cmd)
-            os.chdir(cur_dir)
-        else:
+        if 'creator' == game_engine:
             cmd = [cocos_cmd, 'compile', '-s', proj, '-p', 'ios', '-j', '8']
 
             subprocess.check_call(cmd)
+        else:
+            if cocos_version == 'v2':
+                cur_dir = os.getcwd()
+                os.chdir(proj)
+
+                # get sdk
+                output = subprocess.check_output(['xcodebuild', '-showsdks'])
+                result = re.search('iphonesimulator.+', output)
+                sdk = result.group(0)
+
+                cmd = ['xcodebuild', 'ONLY_ACTIVE_ARCH=YES', '-sdk', sdk, 'VALID_ARCHS=i386', '-configuration', 'Release']
+
+                subprocess.check_call(cmd)
+                os.chdir(cur_dir)
+            else:
+                cmd = [cocos_cmd, 'compile', '-s', proj, '-p', 'ios', '-j', '8']
+
+                subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:
         print '# build ios FAILED. command: ' + ' '.join(e.cmd)
         return e.returncode
@@ -560,11 +572,14 @@ def find_ios_proj(root, cocos_version):
     return ''
 
 
-def clean_up(template_dir, cocos_version):
-    if cocos_version == 'v2':
-        clean_dir = os.path.join(template_dir, '../..')
-    else:
+def clean_up(template_dir, game_engine, cocos_version):
+    if 'creator' == game_engine:
         clean_dir = template_dir
+    else:
+        if cocos_version == 'v2':
+            clean_dir = os.path.join(template_dir, '../..')
+        else:
+            clean_dir = template_dir
 
     subprocess.Popen(['git', 'clean', '-dxf'], cwd=clean_dir).wait()
     subprocess.Popen(['git', 'checkout', '-f'], cwd=clean_dir).wait()
@@ -607,21 +622,63 @@ def clean_sdkbox_cache():
         print 'Removing ' + sdkbox_cache_dir
         shutil.rmtree(sdkbox_cache_dir)
 
+def detect_project_engine(project_path):
+    if os.path.exists(os.path.join(project_path, 'assets')):
+        return 'creator'
+    return 'cocos2d-x'
+
+def apply_creator_to_project(project_path, creator_path):
+    files = [
+        'build/jsb-link/frameworks/runtime-src/proj.android-studio/app/build.gradle',
+        'build/jsb-link/frameworks/runtime-src/proj.android-studio/build-cfg.json',
+        'build/jsb-link/frameworks/runtime-src/proj.android-studio/gradle.properties',
+        'build/jsb-link/frameworks/runtime-src/proj.android-studio/settings.gradle',
+        'build/jsb-link/frameworks/runtime-src/proj.ios_mac/test-creator-1_10_2.xcodeproj/project.pbxproj',
+        'build/jsb-link/frameworks/runtime-src/proj.win32/build-cfg.json',
+        'build/jsb-link/frameworks/runtime-src/proj.win32/test-creator-1_10_2.sln',
+        'build/jsb-link/frameworks/runtime-src/proj.win32/test-creator-1_10_2.vcxproj',
+    ]
+
+    if '/' != creator_path[-1]:
+        creator_path += '/'
+    regex = re.compile(r"/Applications/CocosCreator[\d.]+app/")
+    for f in files:
+        file_path = os.path.join(project_path, f)
+        if not os.path.exists(file_path):
+            continue
+
+        # open file
+        f = open(file_path, 'r')
+        lines = f.readlines()
+        f.close()
+
+        newLines = []
+        for line in lines:
+            line = regex.sub(creator_path, line)
+            newLines.append(line)
+
+        # save file
+        f = open(file_path, 'w')
+        f.write(''.join(newLines))
+        f.close()
+
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'p:g:l:', ['china', 'staging', 'platform=', 'use_cached_package'])
+        opts, args = getopt.getopt(argv, 'p:g:l:', ['china', 'staging', 'platform=', 'use_cached_package', 'creator='])
     except getopt.GetoptError:
         print_usage()
 
     template_dir = ''
     lang_ver = ''
+    game_engine = 'cocos2d-x'
     cocos_version = ''
     installer_server = ''
     platform = ''
     cases = ALL_CASES
     use_cached_package = False
     cocos_cmd = ''
+    creator_path = ''
 
     for opt, arg in opts:
         if opt == '-p':
@@ -638,23 +695,29 @@ def main(argv):
             platform = arg
         if opt == '--use_cached_package':
             use_cached_package = True
+        if opt == '--creator':
+            creator_path = arg
 
     if template_dir == '':
         print_usage()
 
-    print '# Clean sdkbox cache'
-    clean_sdkbox_cache()
+    if not use_cached_package:
+        print '# Clean sdkbox cache'
+        clean_sdkbox_cache()
 
-    print '# Check sdkbox installer directory'
     SDKBOX_INSTALLER_DIR = os.path.join(get_curr_path(), '.sdkbox')
-    if os.path.exists(SDKBOX_INSTALLER_DIR):
+    if not use_cached_package and os.path.exists(SDKBOX_INSTALLER_DIR):
+        print '# remove sdkbox installer directory'
         shutil.rmtree(SDKBOX_INSTALLER_DIR)
 
-    print '# Download sdkbox installer'
-    info = get_installer_url(installer_server == '--staging')
-    path = os.path.join(SDKBOX_INSTALLER_DIR, 'bin', info['bundle'])
-    download_installer(path, info)
-    Utils.unzip_file(path)
+    if not os.path.exists(SDKBOX_INSTALLER_DIR):
+        print '# Download sdkbox installer'
+        info = get_installer_url(installer_server == '--staging')
+        path = os.path.join(SDKBOX_INSTALLER_DIR, 'bin', info['bundle'])
+        download_installer(path, info)
+        Utils.unzip_file(path)
+
+    game_engine = detect_project_engine(template_dir)
 
     if lang_ver == '':
         print '# As lang and version are not specified, get them from template dir name.'
@@ -672,27 +735,36 @@ def main(argv):
         print '# template not found: ' + template_dir
         return 7
 
-    print '# Remove sdkbox cache.'
-    cache_dir = os.path.expanduser('~/.sdkbox/cache')
-    if os.path.exists(cache_dir): shutil.rmtree(cache_dir)
+    if 'cocos2d-x' == game_engine:
+        ios_proj = find_ios_proj(template_dir, cocos_version)
+        if ios_proj == '':
+            return 1
+        android_proj = os.path.abspath(ios_proj + '/../proj.android')
+        cocos_project_dir = template_dir
+    else:
+        cocos_project_dir = os.path.join(template_dir, 'build', 'jsb-link')
+        ios_proj = cocos_project_dir
+        android_proj = cocos_project_dir
 
-    ios_proj = find_ios_proj(template_dir, cocos_version)
-    if ios_proj == '':
-        return 1
-    android_proj = os.path.abspath(ios_proj + '/../proj.android')
     sdkbox_path = get_sdkbox_path()
 
-    cocos_cmd = get_local_cocos_cmd(template_dir)
+    cocos_cmd = get_local_cocos_cmd(template_dir, creator_path)
     if not cocos_cmd:
         cocos_cmd = 'cocos'
 
+    if 'creator' == game_engine:
+        creator_cocos_cmd = os.path.join(creator_path, 'Contents', 'Resources', 'cocos2d-x', 'tools', 'cocos2d-console', 'bin', 'cocos')
+        if os.path.exists(creator_cocos_cmd):
+            cocos_cmd = creator_cocos_cmd
+        apply_creator_to_project(template_dir, creator_path)
+
     for plugins in cases:
         print '# Clean up.'
-        clean_up(template_dir, cocos_version)
+        clean_up(template_dir, game_engine, cocos_version)
 
         for plugin_name in plugins:
             print '# Install plugin ' + plugin_name
-            cmd = [sdkbox_path, 'import', plugin_name, '-p', template_dir, '--nohelp', '--noupdate']
+            cmd = [sdkbox_path, 'import', plugin_name, '-p', cocos_project_dir, '--nohelp', '--noupdate']
             if not use_cached_package:
                 cmd.append('--forcedownload')
             if installer_server != '':
@@ -710,16 +782,16 @@ def main(argv):
                 return 1
 
         if platform != 'android':
-            if build_ios(ios_proj, cocos_version, cocos_cmd) != 0:
+            if build_ios(ios_proj, game_engine, cocos_version, cocos_cmd) != 0:
                 return 1
         if platform != 'ios':
-            if build_android(android_proj, cocos_version, cocos_cmd) != 0:
+            if build_android(android_proj, game_engine, cocos_version, cocos_cmd) != 0:
                 return 1
 
     print '# All Done.'
 
     print '# Clean up.'
-    clean_up(template_dir, cocos_version)
+    clean_up(template_dir, game_engine, cocos_version)
 
     return 0
 

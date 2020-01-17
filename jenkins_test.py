@@ -627,7 +627,7 @@ def detect_project_engine(project_path):
         return 'creator'
     return 'cocos2d-x'
 
-def apply_creator_to_project(project_path, creator_path):
+def apply_creator_engine_to_project(project_path, creator_path):
     files = [
         'build/jsb-link/frameworks/runtime-src/proj.android-studio/app/build.gradle',
         'build/jsb-link/frameworks/runtime-src/proj.android-studio/build-cfg.json',
@@ -756,11 +756,13 @@ def main(argv):
         creator_cocos_cmd = os.path.join(creator_path, 'Contents', 'Resources', 'cocos2d-x', 'tools', 'cocos2d-console', 'bin', 'cocos')
         if os.path.exists(creator_cocos_cmd):
             cocos_cmd = creator_cocos_cmd
-        apply_creator_to_project(template_dir, creator_path)
 
     for plugins in cases:
         print '# Clean up.'
         clean_up(template_dir, game_engine, cocos_version)
+
+        if 'creator' == game_engine:
+            apply_creator_engine_to_project(template_dir, creator_path)
 
         for plugin_name in plugins:
             print '# Install plugin ' + plugin_name

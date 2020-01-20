@@ -37,7 +37,6 @@ ALL_CASES = [
 
     [
         'iap',
-        'firebase',
         'sdkboxplay',
     ],
     [

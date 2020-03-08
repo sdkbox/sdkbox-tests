@@ -5,7 +5,7 @@
  _______ ______  _     _ ______   _____  _     _
  |______ |     \ |____/  |_____] |     |  \___/
  ______| |_____/ |    \_ |_____] |_____| _/   \_
-Copyright (c) 2015-2016 SDKBox Inc.
+Copyright (c) 2015-2020 SDKBox Inc.
 """
 
 # 0. download sdkbox_installer.zip
@@ -78,6 +78,14 @@ ALL_CASES = [
     ],
     [
         'tune'
+    ],
+
+    ## popular plugins
+    [
+        'firebase',
+        'iap',
+        'facebook',
+        'admob',
     ]
 
     # [
